@@ -1,0 +1,49 @@
+Zadanie: Razrabotat prilozhenie, realizuyushee heshirovanie soobshenij.
+Elektronnaya cifrovaya podpis (ECP) kontrolnaya harakteristika soobsheniya, kotoraya vyrabatyvaetsya s ispolzovaniem lichnogo klyucha, proveryaetsya s ispolzovaniem otkrytogo klyucha, sluzhit dlya kontrolya celostnosti i podlinnosti soobsheniya i obespechivaet nevozmozhnost otkaza ot avtorstva. ECP predstavlyaet iz sebya binarnuyu posledovatelnost, pozvolyayushuyu odnoznachno identificirovat otpravitelya.
+Kak pravilo, ECP vychislyaetsya na osnove hesha podpisyvaemogo soobsheniya. To est podpis zavisit ot soderzhaniya togo, chto ej podpisyvaetsya.
+
+ECP na osnove RSA
+ECP na osnove RSA vychislyaetsya po sleduyushej formule:
+S(H(M))^d mod(n),
+	Gde d i n  elementy tajnogo klyucha otpravitelya,
+	H  hesh-funkciya,
+	M  soobshenie.
+	Pri poluchenii podpisannogo soobsheniya polzovatel vychislyaet H(M) i sravnivaet ego so znacheniem:
+H'(M)S^e mod(n),
+	Gde S  podpis,
+	e i n  elementy otkrytogo klyucha otpravitelya.
+	Esli H(M) i H(M) sovpadayut, znachit avtorstvo otpravitelya podtverzhdeno.
+	Klass na Python, realizuyushij ECP ga osnove RSA:
+ECP na osnove El-Gamalya
+Za osnovu beryotsya algoritm asinhronnogo shifrovaniya El-Gamalya. Pri vychislenii ispolzuetsya sluchajnoe chislo k, vzaimno prostoe s p  1 (p  element klyuchevoj informacii v algoritme El-Gamalya). ECP sostoit iz dvuh blokov (a i b), vychislyaemyh po formulam:
+ag^k mod(p),
+b((H(M)-xa)k^(-1) )mod(p-1),
+Gde g, p, x  elementy tajnogo klyucha otpravitelya,
+H  hesh-funkciya,
+M  soobshenie,
+a  pervyj blok ECP,
+b  vtoroj blok ECP.
+Pri poluchenii podpisannogo soobsheniya polzovatel vychislyaet 2 parametra:
+Vg^H(M)  mod(p),
+W(y^a a^b )mod(p),
+Gde g, p, y  elementy otkrytogo klyucha otpravitelya,
+H  hesh-funkciya,
+M  soobshenie,
+a  pervyj blok ECP,
+b  vtoroj blok ECP.
+Esli znacheniya V i W, sovpadayut, to otpravitel verificirovan.
+Klass na Python, realizuyushij ECP na osnove El-Gamalya:
+ECP Shnorra
+ECP Shnorra yavlyaetsya variantom algoritma El-Gamalya. Podpis takzhe sostoit iz dvuh blokov (h i b), no oni vychislyayutsya po drugim formulam:
+a gk mod(p),
+h H(Ma),
+b (k+xh)mod(q),
+Gde p, g, q, x  elementy tajnogo klyucha otpravitelya,
+k  sluchajnoe chislo, vzaimno prostoe s p  1,
+H  hesh-funkciya,
+M  soobshenie.
+Pri poluchenii podpisannogo soobsheniya polzovatel vychislyaet parametr X:
+X(gbyh )mod(p),
+Gde p, g, y  elementy publichnogo klyucha otpravitelya.
+Esli znachenie parametra X sovpadaet so znacheniem bloka h ECP, otpravitel verificirovan.
+Klass na Python, realizuyushij ECP Shnorra:
